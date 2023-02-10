@@ -52,18 +52,19 @@ accommodationRouter.route("/").post(JWTAuthMiddleware, hostOnlyMiddleware, async
   }
 });
 
-// GET - all accommodations [HOSTS & GUESTS]
-accommodationRouter.route("/").get(JWTAuthMiddleware, hallPassMiddleware, async (req, res, next) => {
+// GET - specific accommodation [HOSTS & GUESTS]
+accommodationRouter.route("/:id").get(JWTAuthMiddleware, hallPassMiddleware, async (req, res, next) => {
   try {
-    const accommodations = await AccommodationsModel.find().populate("host");
+    const { id } = req.params;
+    const accommodation = await AccommodationsModel.findById(id).populate("host");
 
-    if (accommodations.length > 0) {
-      res.send({ accommodations });
+    if (accommodation) {
+      res.send({ accommodation });
     } else {
-      next(NotFound(`You have not made any accommodations yet`));
+      next(NotFound(`Accommodation with id: ${id} not in our db`));
     }
   } catch (error) {
-    console.log("GET /me/accommodations - ERROR: ", error);
+    console.log("GET /accommodations - ERROR: ", error);
     next(error);
   }
 });
