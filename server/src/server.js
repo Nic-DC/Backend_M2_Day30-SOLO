@@ -3,8 +3,7 @@ import listEndpoints from "express-list-endpoints";
 import cors from "cors";
 import passport from "passport";
 import mongoose from "mongoose";
-import blogPostsRouter from "./api/blogPosts/index.js";
-import authorsRouter from "./api/authors/index.js";
+
 import usersRouter from "./api/users/index.js";
 import authRouter from "./api/AUTHENTICATIONrouter/index.js";
 import { badRequestHandler, notFoundHandler, genericErrorHandler } from "./errorHandlers.js";
@@ -35,8 +34,7 @@ server.use(express.json());
 server.use(passport.initialize()); // Do not forget to inform Express that we need to use Passport!
 
 // ******************************** ENDPOINTS *****************************************
-server.use("/blogPosts", blogPostsRouter);
-server.use("/authors", authorsRouter);
+
 server.use("/users", usersRouter);
 server.use("/auth", authRouter);
 

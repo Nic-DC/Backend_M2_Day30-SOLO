@@ -16,7 +16,7 @@ authRouter.post("/register", async (req, res, next) => {
     const body = req.body;
     body.isRegistered = true;
 
-    const user = new UsersModel(body); // here it happens validation (thanks to Mongoose) of req.body, if it is not ok Mongoose will throw an error
+    const user = new UsersModel(body);
 
     const newUser = await user.save();
     res.status(201).send(newUser);
