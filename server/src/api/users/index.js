@@ -2,7 +2,7 @@ import express from "express";
 import createHttpError from "http-errors";
 import UsersModel from "./model.js";
 import { JWTAuthMiddleware } from "../../lib/auth/JWTAuth.js";
-import { adminOnlyMiddleware } from "../../lib/auth/adminOnly.js";
+import { hostOnlyMiddleware } from "../../lib/auth/hostOnly.js";
 import { createAccessToken } from "../../lib/tools/tools.js";
 import passport from "passport";
 
@@ -73,7 +73,7 @@ usersRouter.get("/googleRedirect", passport.authenticate("google", { session: fa
 });
 // The purpose of this endpoint is to bring users back, receiving a response from Google, then execute the callback function, then send a response to the client
 
-// usersRouter.get("/", JWTAuthMiddleware, adminOnlyMiddleware, async (req, res, next) => {
+// usersRouter.get("/", JWTAuthMiddleware, hostOnlyMiddleware, async (req, res, next) => {
 //   try {
 //     // const users = await UsersModel.find({}, { firstName: 1, lastName: 1 });
 //     const users = await UsersModel.find();

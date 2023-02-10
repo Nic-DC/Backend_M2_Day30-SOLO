@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 
 const { Schema, model } = mongoose;
 
-const usersSchema = new Schema(
+const travelUsersSchema = new Schema(
   {
     email: { type: String, required: true },
     password: { type: String, required: false },
@@ -23,7 +23,7 @@ const usersSchema = new Schema(
   OR
   when we want to change the password 
 ---------------------------------------------------------------------------*/
-usersSchema.pre("save", async function (next) {
+travelUsersSchema.pre("save", async function (next) {
   // BEFORE saving the user in db, executes this custom function automagically
   // Here I am not using arrow functions as I normally do because of "this" keyword
   // (it would be undefined in case of arrow function, it is the current user in the case of a normal function)
@@ -45,7 +45,7 @@ usersSchema.pre("save", async function (next) {
 /* -------------------------------------------------------------------------  
   used for the GET fetch in order to not show the password and other info 
 ---------------------------------------------------------------------------*/
-usersSchema.methods.toJSON = function () {
+travelUsersSchema.methods.toJSON = function () {
   // This .toJSON method is used EVERY TIME Express does a res.send(user/s)
   // This does mean that we could override the default behaviour of this method to remove the passwords
   // (and other unnecessary things as well) and then return the users
@@ -64,36 +64,8 @@ usersSchema.methods.toJSON = function () {
 /* -------------------------------------------------------------------------  
   create a custom middleware: "checkCredentials" that we'll use to 
 ---------------------------------------------------------------------------*/
-usersSchema.static("checkCredentials", async function (email, password) {
-  // My own custom method attached to the UsersModel
-
-  // Given email and plain text password, this method has to check in the db if the user exists (by email)
-  // Then it should compare the given password with the hashed one coming from the db
-  // Then it should return an useful response
-
-  // 1. Find by email
-  const user = await this.findOne({ email }); //"this" here represents the User Model
-
-  if (user) {
-    // 2. If the user is found --> compare plain password with the hashed one
-    const passwordMatch = await bcrypt.compare(password, user.password);
-
-    if (passwordMatch) {
-      // 3. If passwords they match --> return user
-
-      return user;
-    } else {
-      // 4. If they don't --> return null
-      return null;
-    }
-  } else {
-    // 5. In case of user not found --> return null
-    return null;
-  }
-});
-
-usersSchema.static("checkCredentialsUsername", async function (username, password) {
-  const user = await this.findOne({ username });
+travelUsersSchema.static("checkCredentials", async function (email, password) {
+  const user = await this.findOne({ email });
 
   if (user) {
     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -108,4 +80,4 @@ usersSchema.static("checkCredentialsUsername", async function (username, passwor
   }
 });
 
-export default model("User", usersSchema); // this model is now binded to the "users" collection, if the collection does not exist, mongoose will create it automagically
+export default model("TravelUser", travelUsersSchema); // this model is now binded to the "users" collection, if the collection does not exist, mongoose will create it automagically
