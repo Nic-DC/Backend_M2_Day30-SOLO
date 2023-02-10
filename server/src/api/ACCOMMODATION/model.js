@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
 
 const { Schema, model } = mongoose;
 
 const accommodationSchema = new Schema(
   {
     name: { type: String, required: true },
-    host: { type: Schema.Types.ObjectId, ref: "User" },
-    description: { type: Text, required: true },
+    host: { type: Schema.Types.ObjectId, ref: "TravelUser", required: true },
+    description: { type: String, required: true },
     maxGuests: { type: Number, required: true },
     city: { type: String, required: true },
   },
@@ -16,29 +15,16 @@ const accommodationSchema = new Schema(
   }
 );
 
-accommodationSchema.pre("save", async function (next) {
-  const currentAuthor = this;
-  console.log("this: ", this);
-
-  if (currentAuthor.isModified("password")) {
-    const plainPW = currentAuthor.password;
-
-    const hash = await bcrypt.hash(plainPW, 11);
-    currentAuthor.password = hash;
-  }
-  next();
-});
-
 accommodationSchema.methods.toJSON = function () {
-  const authorDocument = this;
+  const accomodationDocument = this;
   console.log("this in methods.toJSON: ", this);
-  const author = authorDocument.toObject();
+  const accomodation = accomodationDocument.toObject();
 
-  delete author.password;
-  delete author.createdAt;
-  delete author.updatedAt;
-  delete author.__v;
-  return author;
+  delete accomodation.password;
+  delete accomodation.createdAt;
+  delete accomodation.updatedAt;
+  delete accomodation.__v;
+  return accomodation;
 };
 
 export default model("Accomodation", accommodationSchema);

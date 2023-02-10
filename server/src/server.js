@@ -4,8 +4,9 @@ import cors from "cors";
 import passport from "passport";
 import mongoose from "mongoose";
 
-import usersRouter from "./api/users/index.js";
+import usersRouter from "./api/USER/index.js";
 import authRouter from "./api/AUTHENTICATIONrouter/index.js";
+import accommodationRouter from "./api/ACCOMMODATION/index.js";
 import { badRequestHandler, notFoundHandler, genericErrorHandler } from "./errorHandlers.js";
 import googleStrategy from "./lib/auth/googleOAUTH.js";
 
@@ -37,7 +38,7 @@ server.use(passport.initialize()); // Do not forget to inform Express that we ne
 
 server.use("/users", usersRouter);
 server.use("/auth", authRouter);
-
+server.use("/accommodations", accommodationRouter);
 // ***************************** ERROR HANDLERS ***************************************
 server.use(badRequestHandler);
 server.use(notFoundHandler);
