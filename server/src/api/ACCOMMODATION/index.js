@@ -64,7 +64,58 @@ accommodationRouter.route("/:id").get(JWTAuthMiddleware, hallPassMiddleware, asy
       next(NotFound(`Accommodation with id: ${id} not in our db`));
     }
   } catch (error) {
-    console.log("GET /accommodations - ERROR: ", error);
+    console.log("GET / - ERROR: ", error);
+    next(error);
+  }
+});
+
+// EDIT - specific accommodation [only the HOST who made it / only the guest who has it]
+accommodationRouter.put("/:id", JWTAuthMiddleware, hallPassMiddleware, async (req, res, next) => {
+  try {
+    let accommodation = await AccommodationsModel.findById(req.params.id);
+    if (!accommodation) {
+      next(NotFound(`Accommodation with id: ${id} not found`));
+    }
+
+    const currentUser = req.user;
+    console.log("currentUser: ", currentUser);
+    const host = await TravelUsersModel.findById(accommodation.host);
+    console.log("host: ", host);
+
+    if (currentUser._id === host._id.toString() || currentUser.role === "Guest") {
+      Object.assign(accommodation, req.body);
+
+      await accommodation.save();
+
+      res.send({ message: "Accommodation updated successfully", editedAccommodation: accommodation });
+    } else {
+      next(Unauthorized(`You are not authorized to edit this accommodation`));
+    }
+  } catch (error) {
+    console.log("PUT /:id - ERROR: ", error);
+    next(error);
+  }
+});
+
+accommodationRouter.route("/:id").delete(JWTAuthMiddleware, hallPassMiddleware, async (req, res, next) => {
+  try {
+    const accommodation = await AccommodationsModel.findById(req.params.id);
+
+    if (!accommodation) {
+      next(NotFound(`Accommodation with id: ${req.params.id} not found`));
+    }
+
+    const currentUser = req.user;
+    const host = await TravelUsersModel.findById(accommodation.host);
+
+    if (currentUser._id === host._id.toString() || currentUser.role === "Guest") {
+      await accommodation.delete();
+      res.send({ success: `Accommodation with id: ${req.params.id} deleted successfully` });
+    } else {
+      next(NotFound(`Accommodation with id: ${req.params.id} deleted successfully`));
+    }
+  } catch (error) {
+    console.log("DELETE /:id - ERROR: ", error);
     next(error);
   }
 });
