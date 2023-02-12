@@ -1,6 +1,7 @@
 import GoogleStrategy from "passport-google-oauth20";
-import UsersModel from "../../api/users/model.js";
+import TravelUsersModel from "../../api/USER/model.js";
 import { createAccessToken } from "../tools/tools.js";
+import passport from "passport";
 
 // const { GOOGLE_OUTH_CLIENT_ID, GOOGLE_OUTH_SECRET, BE_URL } = process.env;
 // console.log("GOOGLE_OUTH_CLIENT_ID", GOOGLE_OUTH_CLIENT_ID);
@@ -19,7 +20,7 @@ const googleStrategy = new GoogleStrategy(
       const { picture, email, given_name, family_name } = profile._json;
 
       // 1. Check if the user is already in db
-      const user = await UsersModel.findOne({ email });
+      const user = await TravelUsersModel.findOne({ email });
 
       if (user) {
         console.log("user", user);
@@ -29,7 +30,7 @@ const googleStrategy = new GoogleStrategy(
         // 2.1 Then we can go next (to /googleRedirect route handler function), passing the token
         passportNext(null, { accessToken });
       } else {
-        const newUser = new UsersModel({
+        const newUser = new TravelUsersModel({
           firstName: given_name,
           lastName: family_name,
           username: given_name + family_name,

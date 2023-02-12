@@ -3,7 +3,7 @@ import { Form, Button } from "react-bootstrap";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
@@ -23,7 +23,7 @@ const Login = () => {
       },
       body: JSON.stringify(formData),
     };
-    const endpoint = "http://localhost:3008/users/login";
+    const endpoint = "http://localhost:3008/auth/login";
     try {
       const response = await fetch(endpoint, options);
       if (!response.ok) {
@@ -45,14 +45,8 @@ const Login = () => {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Form.Group controlId="username">
-        <Form.Control
-          type="text"
-          name="username"
-          placeholder="username"
-          value={formData.username}
-          onChange={handleChange}
-        />
+      <Form.Group controlId="email">
+        <Form.Control type="email" name="email" placeholder="email" value={formData.email} onChange={handleChange} />
       </Form.Group>
       <Form.Group controlId="password">
         <Form.Control
