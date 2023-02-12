@@ -39,27 +39,24 @@ const GoogleAuthButton = () => {
       // Make an API call to the server to retrieve the user's data using the access token
       setLoading(true);
 
-      // const response = await fetch(`http://localhost:3008/users/${accessToken._id}`, {
-      //   method: "GET",
-      //   headers: {
-      //     Authorization: `Bearer ${accessToken}`,
-      //   },
-      // });
-
       const response = await axios.get(`http://localhost:3008/users/${accessToken._id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
-      const userData = await response.json();
+      if (!response.ok) {
+        throw new Error(`Failed to retrieve user data: ${response.statusText}`);
+      }
+
+      const userData = response.data;
       console.log("usersData from fetch - USER: ", userData);
 
       // set the userData=user & loading=false
       setUser(userData);
       setLoading(false);
     } catch (error) {
-      console.log("handleGoogleRedirect function - ERROR: ", error);
+      console.error("handleGoogleRedirect function - ERROR: ", error);
     }
   }
 
